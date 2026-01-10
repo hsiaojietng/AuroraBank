@@ -44,7 +44,31 @@ These are the smaller points that the Head of Retail Banking and Cards is concer
 - Identify the card and personal loan customer segments that are profitable and engaged
 - Identify early behavioral signals predicting future risk/inactivity for card and personal loan customer segments
 
-After breaking down the problem, I then focus on understanding the dataset.
+Based on deeper research with the respective stakeholders, I found out:
+Engaged customer (Card) - 
+- Has at least 1–2 transactions in the last month (monthly_txn_cnt > 0, ideally > 5).
+- Shows meaningful monthly_spend_sgd relative to their credit_limit_sgd (e.g., utilization_rate between ~20–60%, not zero and not constantly maxed out).
+- Uses the card regularly over several months (not just a one-time welcome offer).
+- Has delinquency bucket in Current or 1-29
+
+Engaged customer (Personal Loan) - 
+- Pays installments on time (days_past_due = 0, delinquency_bucket = Current).
+
+Profitable customer - 
+- Credit, Low/Med risk segment
+- utilization_rate between ~20–60%
+- fraud_flag = 0 and no persistent days_past_due
+- Monthly spend in SGD >= 500
+
+Early risk signals (Card) -
+- Utilization spike metric: High utilization rate > 80 - 90%
+- Minimum monthly spend in SGD: < 500
+
+After breaking down the problem, I then focus on obtaining the dataset.
+
+## Phase 2: Data Collection
+This is the phase where I will reach out to the relevant stakeholders from the different teams (risk, marketing, operations) to collect relevant data for me to analyze. 
+Since this is just a role-play scenario, let's assume that is done and we now have a combined required data within the excel Dataset.
 
 ### Definitions of data:
 customer_id: Unique identifier for each customer record in the portfolio.
@@ -62,4 +86,64 @@ utilization_rate: Ratio of current outstanding balance to credit_limit_sgd, ofte
 fraud_flag: 1 = customer has at least one confirmed fraud case. 0 = no confirmed fraud.
 acquisition_channel: How the customer was acquired for this product, e.g.: Branch – in-person onboarding. Online – digital acquisition through website/app. Partner – via partnerships such as merchants, fintechs, or campaigns.
 
+## Phase 3: Data Cleaning
+Now the raw data collected needs to be cleaned to be accurately analyzed. This is where I handle the missing data, removing duplicates, standardizing formats and setting the correct data types, enhancing data accuracy and reliability.
 
+While looking through the data, I realized there are 
+1) Missing data:
+![NA for column "first_txn_date"](/Screenshots/NA.png)
+2) Inconsistent standard:
+![Inconsistent country standard for column region](/Screenshots/InconsistentStandard.png)
+3) Inconsistent/Invalid data type:
+![Inconsistent datatype for column delinquency_bucket](/Screenshots/InconsistentDatatype.png)
+
+So I perform some research and reach out to the relevant stakeholders for some clarifications.
+Turns out the missing data is because the customer has not made any transactions yet.
+Based on the team, I also found out that the region should be in shorthand. Therefore, I made some bulk changes to the data under that column.
+Additionally, the inconsistent data type is because of the column data type recognizing the data as a date (29-Jan) from the bucket "1-29". Hence I made changes to the data type of that column.
+
+## Phase 4: Data Analysis
+With the data on hand, I want to find patterns and trends in the data to get answers for this statement: Identify the card and personal loan customer segments that are driving delinquencies and fraud.
+
+I found that for most personal loan customers that are grouped in the serious delinquency band (90+) are mostly from Manila. With most customers acquired in a branch.
+![Delinquency Customer Segment](image.png)
+
+Within the card customer segments, there is lower delinquency rate as the highest delinquency band is 1-29 (early stage arrears), with the customers from multiple regions and multiple acquisition channels.
+
+Analyzing the data on fraud, you can see that product type credit card is frequent in the region of BKK (Bangkok) and they are all acquired "Online".
+![Fraud Card Product Type](image-1.png)
+
+Lastly, there is no customer that has a fraud flag for the product type personal loan.
+![Fraud Loan Product Type](image-2.png)
+
+The next point I want to find out is: Identify the card and personal loan customer segments that are profitable and engaged.
+
+As per the definition of engaged, these are the customers that fall in that category for the product type, Credit:
+![Engaged Credit Customers](image-3.png)
+
+And these are the customers for the product type, Personal Loan:
+![Engaged Personal Loan Customers](image-4.png)
+So there's actually no customers in this dataset that falls in this category as all of them have a number of days past due.
+
+As per the definition of profitable, these are the customers that fall in that category for the product type, Credit:
+![Profitable Credit Customers](image-5.png)
+
+For analyzing the 3rd point, I want to find this information out using SQL. Therefore I imported the CSV data into MySQL Workbench to perform queries to obtain some information regarding this point: Identify early behavioral signals predicting future risk/inactivity for card and personal loan customer segments.
+
+Based on this project, assuming the 30 days_past_due would mean future risk and inactivity for card and personal loan, I first filtered these customers out.
+![More Than 30 Days Past Due Customers](image-6.png)
+
+From this dataset that contains the high-risk customers, I found out their average monthly spend in SGD, which is $499.29.
+![Average Monthly Spend for More Than 30 Days Past Due Customers](image-7.png)
+
+I also found out that the average utilization rate of this customer segment is 0.86.
+![Average Utilization rate for More Than 30 Days Past Due Customers](image-8.png)
+
+From this metric, I can use it to find out which customers present these early signs within certain customer segments, for example, high-risk personal loan customers:
+![Potential High Risk Personal Loan Customers](image-9.png)
+
+Additionally, I'm able to find out more about their profile by looking at the data on these customers:
+![Potential High Risk Personal Loan Customers Data](image-12.png)
+
+I also found out which customers present these early signs within the med-risk online acquired credit card customers:
+![Potential High Risk Credit Card Customers Data](image-11.png)
