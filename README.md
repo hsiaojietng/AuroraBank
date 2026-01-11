@@ -174,5 +174,5 @@ From the findings, AuroraBank can enhance their strategies moving forward by:
 - Predictive Analysis: AuroraBank can use historical and real time data, fed into Machine Learning models to learn to identify customers/accounts that are delinquents early and trigger actions/measures to prevent or limit that risk. This is can help to reduce delinquency, directly protecting the profit, capital and ability to grow its lending business.
 
 ## Resources
-- ![Customer Profile Analysis Report](/Resources/CustomerProfileAnalysisReport.png)
-- ![Aurora Bank Presentation](/Resources/AuroraBankPresentation.png)
+- ![Customer Profile Analysis Report](/Resources/Customer Profile Analysis Report.pdf)
+- ![Aurora Bank Presentation](/Resources/AuroraBankPresentation.pptx)
